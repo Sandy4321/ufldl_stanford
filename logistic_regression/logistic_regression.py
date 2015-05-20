@@ -86,8 +86,8 @@ plt.plot(points[:, 0], points[:, 1], 'yo')
 points = X[(y == 1).ravel()]
 plt.plot(points[:, 0], points[:, 1], 'g*')
 
-x_min = 0
-y_min = 0
+x_min = 25
+y_min = 25
 x_max = 105
 y_max = 105
 h = 5
