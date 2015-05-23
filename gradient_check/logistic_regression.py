@@ -63,8 +63,11 @@ epsilon = 10**-6
 #update theta
 for _ in xrange(epoch):
 	
+	gradient_check_delta = gradient_check(theta, X_one, y, epsilon)
 	delta = 1.0/m * gradient(theta, X_one, y)
 	theta += -alpha * delta 
+
+	print np.sum(delta), gradient_check_delta
 
 	#cost from new theta
 	#overall/total average cost

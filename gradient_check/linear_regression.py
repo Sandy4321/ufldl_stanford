@@ -47,7 +47,6 @@ def cost_fun(theta, X, y):
 
 def gradient_check(theta, X, y, epsilon):
 	return (cost_fun(theta + epsilon, X, y) - cost_fun(theta - epsilon, X, y))/float(2*epsilon)
-	# return (error_func(linear_h(X, theta), y) - error_func(linear_h(X, theta-epsilon), y))/float(2*epsilon)
 
 X, y = get_data()
 
@@ -63,14 +62,8 @@ m, n = X_one.shape
 # theta = np.random.random((n, 1))
 theta = np.zeros((n, 1))
 
-#our intial prediction
-y_dash = linear_h(X_one, theta) 
-
-#intial error
-error = error_func(y_dash, y)
-
 #overall/total average cost
-cost = np.mean(error, axis=0)
+cost = cost_fun(theta, X_one, y)
 
 print cost, '<- intial cost'
 
