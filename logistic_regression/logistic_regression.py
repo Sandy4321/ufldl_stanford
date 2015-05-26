@@ -89,8 +89,8 @@ x_min = np.min(X[:, 0])
 y_min = np.min(X[:, 1])
 x_max = np.max(X[:, 0])
 y_max = np.max(X[:, 1])
-h_x = (x_max - x_min)/16.0
-h_y = (y_max - y_min)/16.0
+h_x = (x_max - x_min)/500.0
+h_y = (y_max - y_min)/500.0
 xx, yy = np.meshgrid(np.arange(x_min, x_max+h_x, h_x),
                      np.arange(y_min, y_max+h_y, h_y))
 
