@@ -21,10 +21,10 @@ def func_h(theta, X):
 	return temp
 
 def error_func(theta, X, y):
-	return np.sum(-((y) * np.log(func_h(theta, X)) + (1-y) * np.log(1-func_h(theta, X)) ), axis=1)
+	return np.sum(((y) * np.log(func_h(theta, X)) + (1-y) * np.log(1-func_h(theta, X)) ), axis=1)
 
 def cost_func(theta, X, y):
-	return np.mean(error_func(theta, X, y), axis=0)
+	return -np.mean(error_func(theta, X, y), axis=0)
 
 def gradient(theta, X, y):
 	return X.T.dot(func_h(theta, X) - y)
@@ -70,7 +70,7 @@ for _ in xrange(epoch):
 	#overall/total average cost
 	cost = cost_func(theta, X_one, y)
 
-	#print cost
+	print cost
 
 p1, _, _ = featureNormalize(np.asarray([34.62365962451697, 78.0246928153624]), mu, sigma)
 p2, _, _ = featureNormalize(np.asarray([60.18259938620976, 86.30855209546826]), mu, sigma)
@@ -85,13 +85,14 @@ plt.plot(points[:, 0], points[:, 1], 'yo')
 points = X[(y == 1).ravel()]
 plt.plot(points[:, 0], points[:, 1], 'g*')
 
-x_min = 25
-y_min = 25
-x_max = 105
-y_max = 105
-h = 5
-xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-                     np.arange(y_min, y_max, h))
+x_min = np.min(X[:, 0])
+y_min = np.min(X[:, 1])
+x_max = np.max(X[:, 0])
+y_max = np.max(X[:, 1])
+h_x = (x_max - x_min)/16.0
+h_y = (y_max - y_min)/16.0
+xx, yy = np.meshgrid(np.arange(x_min, x_max+h_x, h_x),
+                     np.arange(y_min, y_max+h_y, h_y))
 
 temp = np.asarray(np.c_[xx.ravel(), yy.ravel()], dtype="float32")
 
