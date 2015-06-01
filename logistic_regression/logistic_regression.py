@@ -61,7 +61,7 @@ def feature_normalization(data, type='standardization', param = None):
 			return Z, Xmax, Xmin
 
 	"""
-	if type is 'standardization':
+	if type == 'standardization':
 		if param is None:
 			mu = np.mean(data, axis=0)
 			sigma =  np.std(data, axis=0)
@@ -71,15 +71,17 @@ def feature_normalization(data, type='standardization', param = None):
 		Z = (data - mu)/sigma
 		return Z, mu, sigma
 
-	elif type is 'min-max':
+	elif type == 'min-max':
 		if param is None:
-			Xmin = np.min(X, axis=0)
-			Xmax = np.max(X, axis=0)
+			Xmin = np.min(data, axis=0)
+			Xmax = np.max(data, axis=0)
 		else:
 			Xmin = param['Xmin']
 			Xmax = param['Xmax']
 
-		Z = (X - Xmin)/(Xmax - Xmin)
+		Xmax = Xmax.astype('float')
+		Xmin = Xmin.astype('float')
+		Z = (data - Xmin)/(Xmax - Xmin)
 		return Z, Xmax, Xmin
 
 def gradient_check(theta, X, y, epsilon):
