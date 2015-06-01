@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -29,18 +31,63 @@ def cost_func(theta, X, y):
 def gradient(theta, X, y):
 	return X.T.dot(func_h(theta, X) - y)
 
-def featureNormalize(X, mu=None, sigma=None):
-	if mu == None or sigma == None:
-		mu = np.mean(X, axis=0)
-		sigma = np.std(X, axis=0)
-	return ((X - mu)/sigma, mu, sigma)
+def feature_normalization(data, type='standardization', param = None):
+	u"""
+		data:
+			an numpy array
+		type:
+			(standardization, min-max)
+		param {default None}: 
+			dictionary
+			if param is provided it is used as mu and sigma when type=standardization else Xmax, Xmin when type=min-max
+			rather then calculating those paramanter
+
+		two type of normalization 
+		1) standardization or (Z-score normalization)
+			is that the features will be rescaled so that they'll have the properties of a standard normal distribution with
+				μ = 0 and σ = 1
+			where μ is the mean (average) and σ is the standard deviation from the mean
+				Z = (X - μ)/σ
+
+			return:
+				Z, μ, σ
+		2) min-max normalization
+			the data is scaled to a fixed range - usually 0 to 1.
+			The cost of having this bounded range - in contrast to standardization - is that we will end up with smaller standard 
+			deviations, which can suppress the effect of outliers.
+
+			A Min-Max scaling is typically done via the following equation:
+				Z = (X - Xmin)/(Xmax-Xmin)
+			return Z, Xmax, Xmin
+
+	"""
+	if type is 'standardization':
+		if param is None:
+			mu = np.mean(data, axis=0)
+			sigma =  np.std(data, axis=0)
+		else:
+			mu = param['mu']
+			sigma = param['sigma']
+		Z = (data - mu)/sigma
+		return Z, mu, sigma
+
+	elif type is 'min-max':
+		if param is None:
+			Xmin = np.min(X, axis=0)
+			Xmax = np.max(X, axis=0)
+		else:
+			Xmin = param['Xmin']
+			Xmax = param['Xmax']
+
+		Z = (X - Xmin)/(Xmax - Xmin)
+		return Z, Xmax, Xmin
 
 def gradient_check(theta, X, y, epsilon):
 	return (cost_func(theta + epsilon, X, y) - cost_func(theta - epsilon, X, y))/float(2*epsilon)
 
 X, y = get_data()
 
-X_norm, mu, sigma = featureNormalize(X)
+X_norm, mu, sigma = feature_normalization(X)
 
 #change X to inculde bias (Add a column of ones to x)
 X_one = np.concatenate((np.ones((X_norm.shape[0], 1)), X_norm), axis=1)
@@ -72,8 +119,13 @@ for _ in xrange(epoch):
 
 	print cost
 
-p1, _, _ = featureNormalize(np.asarray([34.62365962451697, 78.0246928153624]), mu, sigma)
-p2, _, _ = featureNormalize(np.asarray([60.18259938620976, 86.30855209546826]), mu, sigma)
+param = {
+	'mu' : mu,
+	'sigma': sigma
+}
+
+p1, _, _ = feature_normalization(np.asarray([34.62365962451697, 78.0246928153624]), param=param)
+p2, _, _ = feature_normalization(np.asarray([60.18259938620976, 86.30855209546826]), param=param)
 
 predict1 = func_h(theta, np.concatenate(([1], p1), axis=1))
 predict2 = func_h(theta, np.concatenate(([1], p2), axis=1))
@@ -96,7 +148,7 @@ xx, yy = np.meshgrid(np.arange(x_min, x_max+h_x, h_x),
 
 temp = np.asarray(np.c_[xx.ravel(), yy.ravel()], dtype="float32")
 
-p1, _, _ = featureNormalize(np.asarray(temp), mu, sigma)
+p1, _, _ = feature_normalization(np.asarray(temp), param=param)
 
 p1 = func_h(theta, np.concatenate((np.ones((p1.shape[0], 1)), p1), axis=1))
 p1 = p1.reshape(xx.shape)
